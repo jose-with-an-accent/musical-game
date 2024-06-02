@@ -1,3 +1,9 @@
 (
+    Metadata {
+        title: "Show",
+        map_author: "0xDEADBEAN",
+        artist: "Ado",
+        path: "assets/songs/01.ogg",
 
+    }
 )

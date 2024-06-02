@@ -4,7 +4,15 @@ use bevy::prelude::*;
 
 #[derive(Default, Resource)]
 pub struct SongState {
-    tempo: u32,
-    name: String,
-    notes: Vec<Duration>
+    pub tempo: u32,
+    pub name: String,
+    pub notes: Vec<Duration>
 }
+#[derive(States, Debug, Clone, PartialEq, Eq, Hash)]
+enum GameState {
+    Paused,
+    MenuScreen,
+    Normal,
+
+}
+
