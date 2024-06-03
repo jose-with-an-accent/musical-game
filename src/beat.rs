@@ -39,20 +39,28 @@ pub struct BeatHappened(pub Duration);
 #[derive(Event, Debug)]
 pub struct BeatCreated(pub Duration);
 pub struct BeatPlugin;
+#[derive(Component)]
+pub struct Transition;
+#[derive(Bundle)]
+pub struct Beat {
+    timed: Timed,
+    transition: Transition
+
+}
 impl Plugin for BeatPlugin {
     fn build(&self, app: &mut App) {
         // app.add_systems(On, systems)
         app.add_systems(Update, (watch_beat_changes, check_on_beats));
     }
 }
-fn check_on_beats(mut query: Query<&Timed>, mut audio_instances: ResMut<Assets<AudioInstance>>,  handle: Res<InstanceHandle>, mut beat_writer: EventWriter<BeatHappened>) {
-    for item in query.iter() {
+fn check_on_beats(mut commands: Commands, mut query: Query<&Timed>, mut query2: Query<Entity, With<Timed>>, mut audio_instances: ResMut<Assets<AudioInstance>>,  handle: Res<InstanceHandle>, mut beat_writer: EventWriter<BeatHappened>) {
+    for mut item in query.iter() {
         if let Some(instance) = audio_instances.get_mut(&handle.0) {
             if let Some(time) = instance.state().position() {
                 let difference = time - item.start.as_secs_f64();
                 match difference {
-                    -1.3..=-0.3 => {
-
+                    -1.3..=-0.3 => {    
+                        commands.entity(item).insert(Transition);
                     },
                     -0.3..=0.3 => {
                         println!("Beat just happened! {:?} {:?}", time, item.start);

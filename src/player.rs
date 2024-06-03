@@ -4,7 +4,7 @@ use bevy_kira_audio::Audio;
 use crate::beat::BeatHappened;
 #[derive(Component)]
 pub struct Player {
-    
+
 }
 
 pub struct PlayerPlugin;

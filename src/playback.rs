@@ -15,20 +15,22 @@ fn create_audio(mut commands: Commands, audio: Res<Audio>, asset_server: Res<Ass
     let handle = audio.play(asset_server.load("songs/01.ogg")).handle();
     commands.insert_resource(InstanceHandle(handle));
 }
-fn update_playback(mut audio_instances: ResMut<Assets<AudioInstance>>,  handle: Res<InstanceHandle>, mut playback_events: EventReader<PlaybackEvent>) {
+fn update_playback(mut audio_instances: ResMut<Assets<AudioInstance>>, audio: Res<Audio>, handle: Res<InstanceHandle>, mut playback_events: EventReader<PlaybackEvent>) {
     if let Some(instance) = audio_instances.get_mut(&handle.0) {
         for event in playback_events.read() {
             match event {
                 PlaybackEvent::PauseRequested => instance.pause(AudioTween::default()),
                 PlaybackEvent::PlayRequested => instance.resume(AudioTween::default()),
                 PlaybackEvent::BeginningRequested => instance.seek_to(0.),
+                PlaybackEvent::ChangeSong(file_name ) => todo!("Unimplemented")
             };
-        }
-    }
+        };
+    };
 }
 #[derive(Event, Debug)]
 pub enum PlaybackEvent {
     PauseRequested,
     PlayRequested,
-    BeginningRequested
+    BeginningRequested,
+    ChangeSong(String)
 }

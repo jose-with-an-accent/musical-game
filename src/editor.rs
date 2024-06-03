@@ -1,4 +1,4 @@
-use std::time::Duration;
+use std::{fs, time::Duration};
 
 use bevy::prelude::*;
 use bevy_egui::{egui, EguiContext, EguiContexts, EguiPlugin};
@@ -13,6 +13,14 @@ impl Plugin for EditorPlugin {
         app.add_systems(Update, create_ui);
     }
 }
+fn get_songs() -> Vec<String> {
+    let mut songs: Vec<String> = Vec::new();
+
+    let files = fs::read_dir("assets/songs").unwrap();
+    files.for_each(|file| songs.push(file.unwrap().file_name().into_string().unwrap()));
+
+    songs
+}
 fn create_ui(mut song_state: ResMut<SongState>, mut contexts: EguiContexts, mut audio_instances: ResMut<Assets<AudioInstance>>,  handle: Res<InstanceHandle>, mut playback_writer: EventWriter<PlaybackEvent>, mut beat_writer: EventWriter<BeatCreated>, mut beat_reader: EventReader<BeatHappened>) {
     let ctx = contexts.ctx_mut();
     if let Some(instance) = audio_instances.get_mut(&handle.0) {
@@ -22,8 +30,19 @@ fn create_ui(mut song_state: ResMut<SongState>, mut contexts: EguiContexts, mut 
     for event in beat_reader.read() {
         latest_beat = Some(event.0);
     }
-
+    egui::TopBottomPanel::top("options_panel").show(ctx, |ui| {
+        ui.menu_button("Map", |ui| {
+            ui.button("Open")
+        })
+    });
     egui::SidePanel::left("song_generation_panel").exact_width(200.).show(ctx, |ui| {
+        ui.menu_button("Change Song", |ui| {
+            for song in get_songs() {
+                if ui.button(song).clicked() {
+                    // playback_writer.send(PlaybackEvent::ChangeSong(ssong));
+                }
+            }
+        });
         ui.horizontal(|ui| {
             ui.button("Rewind");
             if ui.button("Play").clicked() {
