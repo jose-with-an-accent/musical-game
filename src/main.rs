@@ -1,4 +1,4 @@
-use beat::{BeatCreated, BeatHappened, BeatPlugin};
+use beat::{BeatCreated, BeatHappened, BeatPlugin, BeatsCleared};
 use bevy::prelude::*;
 mod camera;
 mod movement;
@@ -16,10 +16,12 @@ use player::{PlayerPlugin, PlayerScored};
 use camera::CameraPlugin;
 fn main() {
     App::new()
+    .insert_resource(Time::<Fixed>::from_hz(60.))
     .add_event::<PlaybackEvent>()
     .add_event::<BeatCreated>()
     .add_event::<BeatHappened>()
     .add_event::<PlayerScored>()
+    .add_event::<BeatsCleared>()
     .insert_resource(ClearColor(Color::ORANGE_RED))
     .insert_resource(AmbientLight {
         color: Color::WHITE,

@@ -15,14 +15,21 @@ fn create_audio(mut commands: Commands, audio: Res<Audio>, asset_server: Res<Ass
     let handle = audio.play(asset_server.load("songs/01.ogg")).handle();
     commands.insert_resource(InstanceHandle(handle));
 }
-fn update_playback(mut audio_instances: ResMut<Assets<AudioInstance>>, audio: Res<Audio>, handle: Res<InstanceHandle>, mut playback_events: EventReader<PlaybackEvent>) {
+fn update_playback(mut audio_instances: ResMut<Assets<AudioInstance>>, audio: Res<Audio>, mut handle: ResMut<InstanceHandle>, mut playback_events: EventReader<PlaybackEvent>, mut commands: Commands, asset_server: Res<AssetServer>) {
     if let Some(instance) = audio_instances.get_mut(&handle.0) {
         for event in playback_events.read() {
             match event {
                 PlaybackEvent::PauseRequested => instance.pause(AudioTween::default()),
                 PlaybackEvent::PlayRequested => instance.resume(AudioTween::default()),
                 PlaybackEvent::BeginningRequested => instance.seek_to(0.),
-                PlaybackEvent::ChangeSong(file_name ) => todo!("Unimplemented")
+                PlaybackEvent::ChangeSong(file_name ) => {
+                    println!("Change Song!");
+                    instance.stop(AudioTween::default());
+                    let new_handle = audio.play(asset_server.load(format!("songs/{}", file_name))).handle();  
+                    *handle = InstanceHandle(new_handle);
+                    return
+                                      
+                }
             };
         };
     };
