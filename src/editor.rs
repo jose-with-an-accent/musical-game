@@ -5,17 +5,14 @@ use bevy_egui::{egui, EguiContext, EguiContexts, EguiPlugin};
 use bevy_kira_audio::AudioInstance;
 
 use crate::{
-    beat::{BeatCreated, BeatHappened, BeatsCleared},
-    playback::{InstanceHandle, PlaybackEvent},
-    state::SongState,
+    beat::{BeatCreated, BeatHappened, BeatsCleared}, level::LevelIOEvent, playback::{InstanceHandle, PlaybackEvent}, state::{CurrentScreen, SongState}
 };
 pub struct EditorPlugin;
 
 impl Plugin for EditorPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins(EguiPlugin);
-        app.add_systems(Update, create_ui);
-        app.add_systems(Update, check_keyboard_input);
+        app.add_systems(Update, (create_ui, check_keyboard_input));
     }
 }
 fn check_keyboard_input(
@@ -29,7 +26,7 @@ fn check_keyboard_input(
         if let Some(instance) = audio_instances.get_mut(&handle.0) {
             let duration = instance.state().position().unwrap();
             let _ = &song_state.notes.push(Duration::from_secs_f64(duration));
-            beat_writer.send(BeatCreated((Duration::from_secs_f64(duration))));
+            beat_writer.send(BeatCreated(Duration::from_secs_f64(duration)));
         }
     }
 }
@@ -50,6 +47,7 @@ fn create_ui(
     mut playback_writer: EventWriter<PlaybackEvent>,
     mut beat_writer: EventWriter<BeatCreated>,
     mut beat_reader: EventReader<BeatHappened>,
+    mut level_writer: EventWriter<LevelIOEvent>
 ) {
     let ctx = contexts.ctx_mut();
     if let Some(instance) = audio_instances.get_mut(&handle.0) {
@@ -60,7 +58,32 @@ fn create_ui(
             latest_beat = Some(event);
         }
         egui::TopBottomPanel::top("options_panel")
-            .show(ctx, |ui| ui.menu_button("Map", |ui| ui.button("Open")));
+            .show(ctx, |ui| {
+                ui.menu_button("Map", |ui| {
+                    ui.button("Open");
+                    if ui.button("Save").clicked() {
+                        level_writer.send(LevelIOEvent::SAVE);
+                    };
+            });
+    });
+        egui::SidePanel::right("music_playback_panel")
+        .show(ctx, |ui| {
+            ui.horizontal(|ui| {
+                if ui.button("FRW").clicked() {
+                    playback_writer.send(PlaybackEvent::BeginningRequested);
+                }
+
+                ui.button("Rewind");
+                if ui.button("Play").clicked() {
+                    playback_writer.send(PlaybackEvent::PlayRequested);
+                }
+                if ui.button("Pause").clicked() {
+                    playback_writer.send(PlaybackEvent::PauseRequested);
+                }
+                ui.button("Forward");
+
+            })
+        });
         egui::SidePanel::left("song_generation_panel")
             .exact_width(200.)
             .show(ctx, |ui| {
@@ -71,23 +94,10 @@ fn create_ui(
                         }
                     }
                 });
-                ui.horizontal(|ui| {
-                    ui.button("Rewind");
-                    if ui.button("Play").clicked() {
-                        playback_writer.send(PlaybackEvent::PlayRequested);
-                    }
-                    if ui.button("Pause").clicked() {
-                        playback_writer.send(PlaybackEvent::PauseRequested);
-                    }
-                    ui.button("Forward");
-                });
-                ui.horizontal(|ui| {
-                    if ui.button("Beginning").clicked() {
-                        playback_writer.send(PlaybackEvent::BeginningRequested);
-                    }
-                });
+
+
                 ui.heading("Song Editor");
-                ui.label("SONGNAME");
+                ui.label(&song_state.name);
                 ui.horizontal(|ui| {
                     ui.label("Song Name");
                     ui.text_edit_singleline(&mut song_state.name);
@@ -135,7 +145,6 @@ fn create_ui(
                     });
                 }
                 ui.horizontal(|ui| {
-                    ui.button("Save");
                     ui.button("Test");
                 });
             });

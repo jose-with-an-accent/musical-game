@@ -542,9 +542,9 @@ dependencies = [
 
 [[package]]
 name = "bevy_egui"
-version = "0.27.0"
+version = "0.27.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "eac153cb176b04eb0734c60fbc2912aa6fb2539f5b64ba832661c1c4cf9e298a"
+checksum = "b0118223ec165efe20f2e017811539ee1ba1f62b03a878022fbaec9e9bfd56bc"
 dependencies = [
  "arboard",
  "bevy",
@@ -2550,12 +2550,44 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e53debba6bda7a793e5f99b8dacf19e626084f525f7829104ba9898f367d85ff"
 
 [[package]]
+name = "moonshine-save"
+version = "0.3.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a609b5554733055b3e3c4dd1f9d5b18f97f9a67570353b6290f42a10ce0623e8"
+dependencies = [
+ "bevy_app",
+ "bevy_ecs",
+ "bevy_hierarchy",
+ "bevy_reflect",
+ "bevy_scene",
+ "bevy_utils",
+ "moonshine-util",
+ "ron",
+ "serde",
+]
+
+[[package]]
+name = "moonshine-util"
+version = "0.2.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d8fb13ee50b90b7e6292f83c8a7e25beed2fde3ccf5b95d6c5e5ae9396d898a8"
+dependencies = [
+ "bevy_ecs",
+ "bevy_hierarchy",
+]
+
+[[package]]
 name = "musical-game"
 version = "0.1.0"
 dependencies = [
  "bevy",
+ "bevy_ecs",
  "bevy_egui",
  "bevy_kira_audio",
+ "bevy_reflect",
+ "moonshine-save",
+ "ron",
+ "sickle_ui",
 ]
 
 [[package]]
@@ -3401,6 +3433,35 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0fda2ff0d084019ba4d7c6f371c95d8fd75ce3524c3cb8fb653a3023f6323e64"
 
 [[package]]
+name = "sickle_macros"
+version = "0.1.0"
+source = "git+https://github.com/UmbraLuminosa/sickle_ui#be05b85e586c10a79e8065bfe8f7af2df9d7e251"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.66",
+]
+
+[[package]]
+name = "sickle_math"
+version = "0.1.0"
+source = "git+https://github.com/UmbraLuminosa/sickle_ui#be05b85e586c10a79e8065bfe8f7af2df9d7e251"
+dependencies = [
+ "bevy",
+]
+
+[[package]]
+name = "sickle_ui"
+version = "0.1.0"
+source = "git+https://github.com/UmbraLuminosa/sickle_ui#be05b85e586c10a79e8065bfe8f7af2df9d7e251"
+dependencies = [
+ "bevy",
+ "bevy_reflect",
+ "sickle_macros",
+ "sickle_math",
+]
+
+[[package]]
 name = "simd-adler32"
 version = "0.3.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3880,9 +3941,9 @@ checksum = "d4c87d22b6e3f4a18d4d40ef354e97c90fcb14dd91d7dc0aa9d8a1172ebf7202"
 
 [[package]]
 name = "unicode-width"
-version = "0.1.12"
+version = "0.1.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "68f5e5f3158ecfd4b8ff6fe086db7c8467a2dfdac97fe420f2b7c4aa97af66d6"
+checksum = "0336d538f7abc86d282a4189614dfaa90810dfc2c6f6427eaf88e16311dd225d"
 
 [[package]]
 name = "unicode-xid"
@@ -4710,9 +4771,9 @@ dependencies = [
 
 [[package]]
 name = "xkeysym"
-version = "0.2.0"
+version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "054a8e68b76250b253f671d1268cb7f1ae089ec35e195b2efb2a4e9a836d0621"
+checksum = "b9cc00251562a284751c9973bace760d86c0276c471b4be569fe6b068ee97a56"
 
 [[package]]
 name = "xml-rs"

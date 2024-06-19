@@ -9,10 +9,12 @@ pub struct SongState {
     pub notes: Vec<Duration>
 }
 #[derive(States, Debug, Clone, PartialEq, Eq, Hash)]
-enum GameState {
+pub enum GameState {
     Paused,
-    MenuScreen,
     Normal,
-
 }
 
+#[derive(States, Debug, Clone, PartialEq, Eq, Hash)]
+pub enum CurrentScreen {
+    MENU, PLAY, SELECTION, EDITOR
+}
